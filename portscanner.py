@@ -1,6 +1,6 @@
 import socket
 import threading
-import os, sys, platform
+import os, sys
 
 target_ip = sys.argv[1]
 
@@ -11,17 +11,15 @@ def is_valid_ip(ip):
     except socket.error:
         return False
 
+stop_event = threading.Event()
+
 if not is_valid_ip(target_ip):
     print("\033[91m" + "Usage: python portscanner.py " + '\033[34m' "<target_ip>")
     sys.exit(1)
 
-if "windows" in platform.system(): 
-     os.system("cls")
-elif "Linux" in platform.system(): 
-     os.system("clear")
-shape = '\033[34m' + "[" +  '\033[91m' + "+" + '\033[34m' + "]"
 
-print("\033[32m" + """
+def banner():
+    print("\033[32m" + """
 
                                                                                                                               
                                                                                                                               
@@ -42,12 +40,24 @@ print("\033[32m" + """
 
 """)
 
-print('\033[91m' + "My website : " + "\033[32m" + "https://rdkgt7us.000webhostapp.com/")
-print('\033[91m' + "My instgram : " + "\033[32m" + "r_d515\n")
+    print('\033[91m' + "My website : " + "\033[32m" + "https://rdkgt7us.000webhostapp.com/")
+    print('\033[91m' + "My instgram : " + "\033[32m" + "r_d515\n")
 
-stop_event = threading.Event()
+   
+def clear():  
+    os.system("cls")
+    os.system("clear")
+ 
+        
+shape = '\033[34m' + "[" +  '\033[91m' + "+" + '\033[34m' + "]"
+
+
 
 def scan_port(ip, port):
+    """The function who scan
+    ip // The target who will get scan
+    port // The ports
+    """
     try:
         if not stop_event.is_set():
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -61,6 +71,9 @@ def scan_port(ip, port):
         print(str(shape) + '\033[91m' + f" Port {port} is closed")
 
 def main():
+    """This is the function who make config to the scan function"""
+    clear()
+    banner()
     try:
         for port in range(1, 65553):
             if stop_event.is_set():
@@ -73,6 +86,7 @@ def main():
 
 scan_thread = threading.Thread(target=main)
 scan_thread.start()
+
 
 try:
     # Keep the main thread running
